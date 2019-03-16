@@ -26,7 +26,7 @@ using namespace std;
  * ought to get to a common point as soon as possible.  This is that
  * common point.
  */
-void true_main() {
+void true_main(DWORD ProcessId) {
     // Bootstrapper
     char DllName[MAX_PATH];
     GetCurrentDirectoryA(MAX_PATH, DllName);
@@ -37,8 +37,7 @@ void true_main() {
     GetCurrentDirectory(MAX_PATH, DllNameW);
     wcscat_s(DllNameW, L"\\ExampleProject.dll");
     
-    DWORD Pid = GetProcessIdByName("GoldWave.exe");
-    InjectAndRunThenUnload(Pid, DllName, "LoadManagedProject", DllNameW);
+    InjectAndRunThenUnload(ProcessId, DllName, "LoadManagedProject", DllNameW);
 }
 
 /* By starting as a Windows application but not displaying any
@@ -49,15 +48,19 @@ int __stdcall WinMain (HINSTANCE hInstance,
                        LPSTR lpCmdLine,
                        int cmdShow)
 {
-    true_main();
+	char *NextToken;
+	char* StrPid = strtok_s(lpCmdLine, " ", &NextToken);
+	DWORD Pid = atoi(StrPid);
+    true_main(Pid);
     return 0;
 }
 
 /* In any case, it's useful to have a console window visible
  * for debugging purposes.  Use cout to your heart's content!
  */
-int main()
+int main(int argc, char* argv[])
 {
-    true_main();
+	DWORD Pid = atoi(argv[1]);
+    true_main(Pid);
     return 0;
 }

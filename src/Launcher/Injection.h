@@ -3,12 +3,6 @@
 #include <TlHelp32.h>
 #include <stdlib.h>
 
-/* Given a cstring, returns the pid of a running executable, or NULL if the
- * executable was not found. In the case of multiple executables, returns
- * the first one found.
- */
-DWORD GetProcessIdByName(const char * name);
-
 /* Injects the specified dll into a running process, calls a specific
  * method on that dll, then unloads the dll.
  */
