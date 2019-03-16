@@ -32,6 +32,31 @@ DWORD GetProcessIdByName(const char * name)
     return NULL;
 }
 
+bool SetPrivilege()
+{
+	HANDLE hToken = NULL;
+	TOKEN_PRIVILEGES token_priv;
+	LUID luid_debug;
+
+	if (!OpenProcessToken(GetCurrentProcess(), TOKEN_ADJUST_PRIVILEGES, &hToken)) {
+		return false;
+	}
+
+	if (LookupPrivilegeValue(NULL, SE_DEBUG_NAME, &luid_debug)) {
+		token_priv.PrivilegeCount = 1;
+		token_priv.Privileges[0].Luid = luid_debug;
+		token_priv.Privileges[0].Attributes = SE_PRIVILEGE_ENABLED;
+
+		if (!AdjustTokenPrivileges(hToken, FALSE, &token_priv, 0, NULL, NULL)) {
+			return false;
+		}
+	}
+
+	CloseHandle(hToken);
+
+	return true;
+}
+
 BOOL InjectAndRunThenUnload(DWORD ProcessId, const char * DllName, const std::string& ExportName, const wchar_t * ExportArgument)
 {
     using namespace Hades;
@@ -45,6 +70,12 @@ BOOL InjectAndRunThenUnload(DWORD ProcessId, const char * DllName, const std::st
         cout << "Specified Process not found" << endl;
         return false;
     }
+
+	if (!SetPrivilege())
+	{
+		cout << "Failed to set debug privilege: " << GetLastError() << endl;
+		return false;
+	}
 
     EnsureCloseHandle Proc = OpenProcess(PROCESS_ALL_ACCESS, FALSE, ProcessId);
 
