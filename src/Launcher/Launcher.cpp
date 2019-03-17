@@ -35,7 +35,7 @@ void true_main(DWORD ProcessId) {
     // ExampleProject
     wchar_t DllNameW[MAX_PATH];
     GetCurrentDirectory(MAX_PATH, DllNameW);
-    wcscat_s(DllNameW, L"\\ExampleProject.dll");
+    wcscat_s(DllNameW, L"\\Main.dll");
     
     InjectAndRunThenUnload(ProcessId, DllName, "LoadManagedProject", DllNameW);
 }

@@ -5,6 +5,9 @@
 
 // For exporting functions without name-mangling
 #define DllExport extern "C" __declspec( dllexport )
+// Get current DLL handle
+EXTERN_C IMAGE_DOS_HEADER __ImageBase;
+#define HINST_THISCOMPONENT ((HINSTANCE)&__ImageBase)
 
 // Our sole export for the time being
 DllExport void LoadManagedProject(const wchar_t * managedDllLocation);
