@@ -5,7 +5,7 @@
 
 #include "Bootstrapper.h"
 
-DllExport void LoadManagedProject(const wchar_t * managedDllLocation)
+DllExport void LoadManagedProject(const wchar_t* managedDllLocation)
 {
 	HRESULT hr;
 
@@ -24,7 +24,8 @@ DllExport void LoadManagedProject(const wchar_t * managedDllLocation)
 		);
 	}
 	// Unload Bootstrapper
-	FreeLibrary(HINST_THISCOMPONENT);
+	// Causes a crash, probably because the CLR is still executing when the DLL is unloaded
+	// FreeLibrary(HINST_THISCOMPONENT);
 }
 
 ICLRRuntimeHost* StartCLR(LPCWSTR dotNetVersion)
@@ -36,7 +37,7 @@ ICLRRuntimeHost* StartCLR(LPCWSTR dotNetVersion)
 	ICLRRuntimeHost* pClrRuntimeHost = NULL;
 
 	// Get the CLRMetaHost that tells us about .NET on this machine
-	hr = CLRCreateInstance(CLSID_CLRMetaHost, IID_ICLRMetaHost, (LPVOID*)&pClrMetaHost);
+	hr = CLRCreateInstance(CLSID_CLRMetaHost, IID_ICLRMetaHost, (LPVOID*)& pClrMetaHost);
 	if (hr == S_OK)
 	{
 		// Get the runtime information for the particular version of .NET
